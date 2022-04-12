@@ -5,7 +5,7 @@
 ## done
 ##
 
-OUT 	=	ftp
+OUT 	=	myftp
 SOURCE	=	src/main.c
 CC		=	gcc
 CFLAGS	=	-W -Wall -Wshadow -Wextra -I./includes
