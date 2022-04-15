@@ -6,7 +6,12 @@
 ##
 
 OUT 	=	myftp
-SOURCE	=	src/main.c
+SOURCE	=	src/main.c			\
+			src/metadata.c		\
+			src/server.c		\
+			src/client.c		\
+			src/command.c		\
+			src/string_util.c
 CC		=	gcc
 CFLAGS	=	-W -Wall -Wshadow -Wextra -I./includes
 LDFLAGS	=
@@ -24,7 +29,7 @@ clean:
 fclean:	clean
 	$(RM) $(OUT)
 
-re:		all
+re:		fclean all
 
 debug:	CFLAGS	+=	-ggdb
 debug:	re

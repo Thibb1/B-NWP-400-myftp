@@ -2,3 +2,5 @@
 *.txt
 *.sh
 myftp
+vgcore*
+.idea
