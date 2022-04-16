@@ -40,11 +40,13 @@ bool dir_ok(char *path)
 void parse_av(char *av[])
 {
     char *ptr;
+    char actual_path[PATH_MAX];
 
-    ASSERT(!dir_ok(av[2]), "dir");
+    realpath(av[2], actual_path);
+    ASSERT(!dir_ok(actual_path), "dir");
     my_server()->port = strtol(av[1], &ptr, 10);
     ASSERT(av[1] == ptr || my_server()->port < 0, "port");
-    my_server()->home_anon = calloc(strlen(av[2]) + 1, sizeof(char));
-    my_server()->home_anon = strcpy(my_server()->home_anon, av[2]);
+    my_server()->home_anon = calloc(strlen(actual_path) + 1, sizeof(char));
+    strcpy(my_server()->home_anon, actual_path);
     ASSERT(!my_server()->home_anon, "dir copy");
 }

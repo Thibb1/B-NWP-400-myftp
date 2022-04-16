@@ -37,7 +37,10 @@ void garbage_delete(void)
     if (my_server())
         DESTROY(my_server()->home_anon);
     DESTROY(my_server());
-    for (int i = 0; i < MAX_CLIENTS; i++)
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        DESTROY(C_PATH);
+        DESTROY(C_CMD);
         DESTROY(my_client(i));
+    }
     DESTROY(my_clients());
 }

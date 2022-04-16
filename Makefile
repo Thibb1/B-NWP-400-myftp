@@ -6,12 +6,16 @@
 ##
 
 OUT 	=	myftp
-SOURCE	=	src/main.c			\
-			src/metadata.c		\
-			src/server.c		\
-			src/client.c		\
-			src/command.c		\
-			src/string_util.c
+SOURCE	=	src/main.c					\
+			src/metadata.c				\
+			src/server.c				\
+			src/client.c				\
+			src/command.c				\
+			src/string_util.c			\
+			src/commands/my_cwd.c		\
+			src/commands/my_quit.c		\
+			src/commands/display_cmd.c	\
+			src/commands/my_client.c
 CC		=	gcc
 CFLAGS	=	-W -Wall -Wshadow -Wextra -I./includes
 LDFLAGS	=

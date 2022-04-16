@@ -2,30 +2,25 @@
 ** EPITECH PROJECT, 2022
 ** command.c
 ** File description:
-** TODO
+** handle commands input
 */
 
 #include "my_ftp.h"
+#include "my_commands.h"
 
-void command_cmp(int i, char *cmd, char *arg)
+void handle_command(int i)
 {
-    if (!strcmp(cmd, "NOOP")) {
-        dprintf(C_SOCKET, NOOP);
-        return;
-    }
-    if (!strcmp(cmd, "HELP")) {
-        CHECK_ARG(arg);
-        dprintf(C_SOCKET, HELP);
-        return;
-    }
-}
+    int x = 0;
 
-void handle_command(int i, char *cmd, char *arg)
-{
-    LOG("%s:%s", cmd, arg);
-    if (cmd == NULL || !strcmp(cmd, "QUIT")) {
-        disconnect_client(i);
+    if (!C_CMD || !C_CMD[0]) {
+        dprintf(C_SOCKET, SYNTAX_ERROR);
         return;
     }
-    command_cmp(i, cmd, arg);
+    for (; COMMANDS[x] && strcmp(COMMANDS[x], C_CMD[0]); x++);
+    if (COMMANDS[x] && COMMANDS_FUNC[x])
+        COMMANDS_FUNC[x](i);
+    else if (COMMANDS[x])
+        dprintf(C_SOCKET, NOT_IMPL, C_CMD[0]);
+    else
+        dprintf(C_SOCKET, SYNTAX_ERROR);
 }

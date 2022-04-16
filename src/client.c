@@ -15,23 +15,27 @@ void disconnect_client(int i)
     LOG("Connection closed %s:%d", inet_ntoa(S_ADDR.sin_addr), ntohs(S_PORT));
     close(C_SOCKET);
     C_SOCKET = 0;
+    DESTROY(C_CMD);
+    DESTROY(C_PATH);
+    DESTROY(C_ACC);
+    C_CNT = false;
+    C_CMD = NULL;
+    C_PATH = NULL;
+    C_ACC = NULL;
 }
 
 void handle_client(int i)
 {
     ssize_t read_ret;
     char buffer[1024];
-    char *cmd = NULL;
-    char *arg = NULL;
 
     if (FD_ISSET(C_SOCKET, &my_server()->read_fds)) {
         if ((read_ret = read(C_SOCKET, buffer, 1024)) == 0) {
             disconnect_client(i);
         } else {
             buffer[read_ret] = 0;
-            cmd = strtok(buffer, DELIM);
-            arg = strtok(NULL, DELIM);
-            handle_command(i, cmd, arg);
+            to_word_array(i, buffer);
+            handle_command(i);
         }
     }
 }
@@ -47,6 +51,9 @@ void connect_client(void)
     for (int i = 0; i < MAX_CLIENTS; i++) {
         if (C_SOCKET == 0) {
             C_SOCKET = my_server()->new_socket;
+            C_CNT = false;
+            C_PATH = calloc(strlen(my_server()->home_anon) + 1, sizeof(char));
+            strcpy(C_PATH, my_server()->home_anon);
             break;
         }
     }
