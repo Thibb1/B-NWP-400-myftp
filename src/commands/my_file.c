@@ -9,6 +9,7 @@
 
 void my_dele(int i)
 {
+    CHECK_LOG;
     chdir(C_PATH);
     CHECK_ARG(C_CMD[1]);
     if (access(C_CMD[1], W_OK) == 0 && remove(C_CMD[1]) == 0)

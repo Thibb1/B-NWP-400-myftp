@@ -30,6 +30,6 @@ void my_pass(int i)
     } else if (!C_ACC) {
         dprintf(C_SOCKET, ACC_KO);
     } else {
-        dprintf(C_SOCKET, COMMAND_ERROR);
+        dprintf(C_SOCKET, LOG_IN);
     }
 }

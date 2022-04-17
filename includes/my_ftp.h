@@ -58,6 +58,7 @@
     #define COMMAND_ERROR "501 " BOLD RED "Syntax error in parameters or" \
     " arguments" RESET CR
     #define NOT_IMPL "502 " BOLD RED "Command not implemented. (%s)" RESET CR
+    #define LOG_IN "530 " BOLD RED "Not logged in." RESET CR
     #define FOLDER_ERROR "550 " BOLD RED "%s Folder error" RESET CR
     #define FILE_ERROR "550 " BOLD RED "%s File error" RESET CR
 
@@ -141,4 +142,11 @@ if (!(v)) { \
     dprintf(C_SOCKET, COMMAND_ERROR); \
     return; \
 }
+
+    #define CHECK_LOG \
+if (!C_CNT) { \
+    dprintf(C_SOCKET, LOG_IN); \
+    return; \
+}
+
 #endif

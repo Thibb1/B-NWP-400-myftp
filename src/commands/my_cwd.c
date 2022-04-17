@@ -11,6 +11,7 @@ void my_cwd(int i)
 {
     char actual_path[PATH_MAX];
 
+    CHECK_LOG
     CHECK_ARG(C_CMD[1]);
     chdir(C_PATH);
     if (dir_ok(C_CMD[1])) {
@@ -28,6 +29,7 @@ void my_cdup(int i)
 {
     char actual_path[PATH_MAX];
 
+    CHECK_LOG
     chdir(C_PATH);
     if (dir_ok("..")) {
         realpath("..", actual_path);
