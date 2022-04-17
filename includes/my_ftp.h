@@ -29,6 +29,7 @@
     #define RED "\033[31m"
     #define GREEN "\033[32m"
     #define BLUE "\033[34m"
+    #define ORANGE "\033[38;5;208m"
     #define BOLD "\033[1m"
     #define CR "\r\n"
 
@@ -46,7 +47,9 @@
     #define SERVICE_READY "220 " BOLD GREEN "Service ready for new user." \
     RESET CR
     #define LOGOUT "221 " BOLD RED "Disconnected" RESET CR
+    #define PASV "227 Entering Passive Mode (%02d:)"
     #define LOGIN "230 " BOLD GREEN "User logged in" RESET CR
+    #define DELE "250 " BOLD ORANGE "%s deleted" RESET CR
     #define DIR_CHANGED "250 " BOLD GREEN "%s" RESET CR
     #define ACC_OK "331 " BOLD GREEN "User name okay, need password." RESET CR
     #define ACC_KO "332 " BOLD RED "Need account for login." RESET CR
@@ -56,6 +59,7 @@
     " arguments" RESET CR
     #define NOT_IMPL "502 " BOLD RED "Command not implemented. (%s)" RESET CR
     #define FOLDER_ERROR "550 " BOLD RED "%s Folder error" RESET CR
+    #define FILE_ERROR "550 " BOLD RED "%s File error" RESET CR
 
     #define DESTROY(v) \
 if (v) { \

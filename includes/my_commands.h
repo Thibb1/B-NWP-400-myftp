@@ -13,6 +13,7 @@ void my_pass(int);
 void my_cwd(int);
 void my_cdup(int);
 void my_quit(int);
+void my_dele(int);
 void my_pwd(int);
 void my_help(int);
 void my_noop(int);
@@ -41,7 +42,7 @@ static void (*COMMANDS_FUNC[])(int) = {
     my_cwd,
     my_cdup,
     my_quit,
-    NULL,
+    my_dele,
     my_pwd,
     NULL,
     NULL,
