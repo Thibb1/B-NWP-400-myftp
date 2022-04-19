@@ -28,12 +28,12 @@ void create_data(int i)
     ASSERT(C_DATA == -1, "data");
     C_OPT = true;
     ASSERT(setsockopt(C_DATA, SOL_SOCKET, SO_REUSEADDR, (char *)&C_OPT,
-                      sizeof(C_OPT)) < 0, "data opt");
+        sizeof(C_OPT)) < 0, "data opt");
     C_ADDR.sin_addr.s_addr = htonl(INADDR_ANY);
     C_PORT = htons(0);
     C_ADDR.sin_family = AF_INET;
     ASSERT(bind(C_DATA, (struct sockaddr *)&C_ADDR,
-                sizeof(struct sockaddr_in)) == -1, "data bind");
+        sizeof(struct sockaddr_in)) == -1, "data bind");
     ASSERT(listen(C_DATA, 1) == -1, "data listen");
     C_ADLEN = sizeof(C_ADDR);
     FD_ZERO(&CLIENT->read_fds);
@@ -49,7 +49,7 @@ void my_pasv(int i)
     create_data(i);
     port = get_port(C_DATA);
     dprintf(C_SOCKET, PASV, replace(inet_ntoa(S_ADDR.sin_addr), '.', ','),
-            port / 256, port % 256);
+        port / 256, port % 256);
     LOG("New port opened: %d", port);
     FCLOSE(C_DTSCT);
     C_DTSCT = accept(C_DATA, (struct sockaddr *)&C_ADDR, &C_ADLEN);

@@ -71,4 +71,3 @@ void my_stor(int i)
     }
     close_socket(i);
 }
-
