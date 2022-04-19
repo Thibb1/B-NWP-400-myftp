@@ -164,8 +164,7 @@ if (v) { \
     garbage_delete(); \
     exit(84); \
 }
-    #define LOG(fm, args...) \
-{ \
+    #define LOG(fm, args...) { \
     time_t t = time(NULL); \
     struct tm tm = *localtime(&t); \
     printf(LOG_MESS fm "\n", tm.tm_hour, tm.tm_min, tm.tm_sec, __FILE__, \
