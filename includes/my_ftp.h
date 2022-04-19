@@ -22,11 +22,11 @@
     #include <time.h>
     #include <fcntl.h>
 
-    #define MAX_CLIENTS 2
+    #define MAX_CLIENTS SOMAXCONN
 
     #define DELIM " \r\n"
 
-        #define RESET "\033[0m"
+    #define RESET "\033[0m"
     #define RED "\033[31m"
     #define GREEN "\033[32m"
     #define BLUE "\033[34m"
@@ -102,6 +102,7 @@ typedef struct client_s {
     struct sockaddr_in addr;
     socklen_t addr_len;
     fd_set read_fds;
+    int activity;
     char **cmd;
     char *acc;
     bool connected;

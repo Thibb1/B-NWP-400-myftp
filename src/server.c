@@ -39,7 +39,7 @@ void run_server(void)
     LOG("Server listening");
     while (my_server()->running) {
         routine_server();
-        if (FD_ISSET(S_SOCKET, &my_server()->read_fds))
+        if (FD_ISSET(S_SOCKET, &SERVER->read_fds))
             connect_client();
         for (int i = 0; i < MAX_CLIENTS; i++)
             handle_client(i);
@@ -57,7 +57,7 @@ void routine_server(void)
         if (C_SOCKET > SERVER->max_fd)
             SERVER->max_fd = C_SOCKET;
     }
-    SERVER->activity = select(SERVER->max_fd + 1,
-        &SERVER->read_fds, NULL, NULL, NULL);
+    SERVER->activity = select(SERVER->max_fd + 1, &SERVER->read_fds, NULL,
+        NULL, NULL);
     ASSERT((SERVER->activity < 0) && (errno != EINTR), "select");
 }

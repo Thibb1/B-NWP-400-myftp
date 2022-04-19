@@ -46,16 +46,16 @@ void handle_client(int i)
 
 void connect_client(void)
 {
-    ASSERT((my_server()->new_socket = accept(S_SOCKET,
-        (struct sockaddr *)&S_ADDR, &S_ADLEN)) < 0, "accept error");
+    ASSERT((SERVER->new_socket = accept(S_SOCKET,(struct sockaddr *)&S_ADDR,
+        &S_ADLEN)) < 0, "accept error");
     LOG("Connection from %s:%d", inet_ntoa(S_ADDR.sin_addr), ntohs(S_PORT));
-    ASSERT(dprintf(my_server()->new_socket, SERVICE_READY) < 0, "message");
+    ASSERT(dprintf(SERVER->new_socket, SERVICE_READY) < 0, "message");
     LOG("Welcomed new connection");
     for (int i = 0; i < MAX_CLIENTS; i++) {
         if (C_SOCKET == 0) {
-            C_SOCKET = my_server()->new_socket;
+            C_SOCKET = SERVER->new_socket;
             C_CNT = false;
-            C_PATH = strdup(my_server()->home_anon);
+            C_PATH = strdup(SERVER->home_anon);
             return;
         }
     }
