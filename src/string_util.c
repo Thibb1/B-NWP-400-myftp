@@ -31,3 +31,34 @@ void to_word_array(int i, char *buff)
     while ((ptr = strtok_r(buff, DELIM, &buff)))
         C_CMD[x++] = ptr;
 }
+
+char *replace(char *str, char from, char to)
+{
+    char *ptr = str;
+
+    while ((ptr = strchr(ptr, from)) != NULL)
+        *ptr++ = to;
+    return str;
+}
+
+uint16_t get_port(int socket)
+{
+    struct sockaddr_in sin;
+    socklen_t len = sizeof(sin);
+
+    if (getsockname(socket, (struct sockaddr *)&sin, &len) != -1)
+        return ntohs(sin.sin_port);
+    return 0;
+}
+
+void read_output(FILE *f, int i, bool replace)
+{
+    int ch;
+
+    while ((ch = fgetc(f)) != EOF) {
+        if (ch == '\n' && replace)
+            dprintf(C_DTSCT, CR);
+        else
+            dprintf(C_DTSCT, "%c", ch);
+    }
+}

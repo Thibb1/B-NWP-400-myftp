@@ -20,12 +20,13 @@
     #include <stdbool.h>
     #include <dirent.h>
     #include <time.h>
+    #include <fcntl.h>
 
     #define MAX_CLIENTS 2
 
     #define DELIM " \r\n"
 
-    #define RESET "\033[0m"
+        #define RESET "\033[0m"
     #define RED "\033[31m"
     #define GREEN "\033[32m"
     #define BLUE "\033[34m"
@@ -40,6 +41,10 @@
     "\tport is the port number on which the server socket listens\n" \
     "\tpath is the path to the home directory for the Anonymous use"
 
+    #define IP "(%s,%d,%d)"
+
+    #define OPENING "150 " BOLD GREEN "File status okay; about to open data" \
+    " connection." RESET CR
     #define NOOP "200 " BOLD GREEN "Command ok." RESET CR
     #define HELP "214 " BOLD BLUE "%s" RESET CR
     #define HELP_LIST "214 " BOLD BLUE "[USER, PASS, CWD, CDUP, QUIT, DELE," \
@@ -47,12 +52,15 @@
     #define SERVICE_READY "220 " BOLD GREEN "Service ready for new user." \
     RESET CR
     #define LOGOUT "221 " BOLD RED "Disconnected" RESET CR
-    #define PASV "227 Entering Passive Mode (%02d:)"
+    #define DATA_CLOS "226 " BOLD GREEN "Closing data connection." RESET CR
+    #define PASV "227 " BOLD GREEN "Entering Passive Mode " RESET IP CR
     #define LOGIN "230 " BOLD GREEN "User logged in" RESET CR
     #define DELE "250 " BOLD ORANGE "%s deleted" RESET CR
     #define DIR_CHANGED "250 " BOLD GREEN "%s" RESET CR
     #define ACC_OK "331 " BOLD GREEN "User name okay, need password." RESET CR
     #define ACC_KO "332 " BOLD RED "Need account for login." RESET CR
+    #define DATA_CONN "425 " BOLD RED "Can't open data connection." RESET CR
+    #define FILE_ERR "452 " BOLD RED "File transfer error." RESET CR
     #define SYNTAX_ERROR "500 " BOLD RED "Syntax error, command " \
     "unrecognized." RESET CR
     #define COMMAND_ERROR "501 " BOLD RED "Syntax error in parameters or" \
@@ -66,6 +74,10 @@
 if (v) { \
     free(v); \
 }
+    #define FCLOSE(f) \
+if (f) { \
+    close(f); \
+}
 
 typedef struct server_s {
     long port;
@@ -74,17 +86,22 @@ typedef struct server_s {
     int max_fd;
     int opt;
     struct sockaddr_in addr;
-    int addr_len;
+    socklen_t addr_len;
     fd_set read_fds;
     int activity;
     int new_socket;
-    int read_ret;
     bool running;
 } server_t;
 
 typedef struct client_s {
     char *path;
     int socket;
+    int data;
+    int data_sock;
+    int opt;
+    struct sockaddr_in addr;
+    socklen_t addr_len;
+    fd_set read_fds;
     char **cmd;
     char *acc;
     bool connected;
@@ -104,22 +121,39 @@ void handle_client(int);
 void disconnect_client(int);
 
 void handle_command(int);
+char *commands_with_args(char *, int);
 
 void to_word_array(int, char *);
 int len_array(char *);
+char *replace(char *, char, char);
+uint16_t get_port(int);
+void read_output(FILE *, int, bool);
 
 void garbage_delete(void);
 server_t *my_server(void);
 client_t **my_clients(void);
 client_t *my_client(int);
 
-    #define C_SOCKET my_client(i)->socket
-    #define C_PATH my_client(i)->path
-    #define C_CMD my_client(i)->cmd
-    #define C_ACC my_client(i)->acc
-    #define C_CNT my_client(i)->connected
-    #define S_SOCKET my_server()->socket
-    #define S_ADDR my_server()->addr
+void close_socket(int);
+void open_socket(int);
+
+    #define CLIENT my_client(i)
+    #define C_SOCKET CLIENT->socket
+    #define C_DATA CLIENT->data
+    #define C_DTSCT CLIENT->data_sock
+    #define C_OPT CLIENT->opt
+    #define C_ADDR CLIENT->addr
+    #define C_ADLEN CLIENT->addr_len
+    #define C_PORT C_ADDR.sin_port
+    #define C_PATH CLIENT->path
+    #define C_CMD CLIENT->cmd
+    #define C_ACC CLIENT->acc
+    #define C_CNT CLIENT->connected
+    #define SERVER my_server()
+    #define S_SOCKET SERVER->socket
+    #define S_ADDR SERVER->addr
+    #define S_ADLEN SERVER->addr_len
+    #define S_OPT SERVER->opt
     #define S_PORT S_ADDR.sin_port
 
     #define DEF_OR_ARG(value, ...) value
@@ -142,10 +176,14 @@ if (!(v)) { \
     dprintf(C_SOCKET, COMMAND_ERROR); \
     return; \
 }
-
     #define CHECK_LOG \
 if (!C_CNT) { \
     dprintf(C_SOCKET, LOG_IN); \
+    return; \
+}
+    #define CHECK_SOCKET \
+if (!C_DTSCT) { \
+    dprintf(C_SOCKET, DATA_CONN); \
     return; \
 }
 

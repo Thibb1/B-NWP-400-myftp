@@ -16,7 +16,9 @@ SOURCE	=	src/main.c					\
 			src/commands/my_quit.c		\
 			src/commands/display_cmd.c	\
 			src/commands/my_client.c	\
-			src/commands/my_file.c
+			src/commands/my_file.c		\
+			src/commands/my_list.c		\
+			src/commands/my_socket.c
 CC		=	gcc
 CFLAGS	=	-W -Wall -Wshadow -Wextra -I./includes
 LDFLAGS	=

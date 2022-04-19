@@ -24,3 +24,19 @@ void handle_command(int i)
     else
         dprintf(C_SOCKET, SYNTAX_ERROR);
 }
+
+char *commands_with_args(char *cmd, int i)
+{
+    size_t len = strlen(cmd);
+    char *str = NULL;
+
+    for (int j = 1; C_CMD[j]; j++)
+        len += strlen(C_CMD[j]) + 1;
+    str = calloc(len + 1, sizeof(char));
+    strcat(str, cmd);
+    for (int j = 1; C_CMD[j]; j++) {
+        strcat(str, " ");
+        strcat(str, C_CMD[j]);
+    }
+    return str;
+}

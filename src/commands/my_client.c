@@ -16,8 +16,7 @@ void my_user(int i)
     }
     C_CNT = false;
     DESTROY(C_ACC);
-    C_ACC = calloc(strlen(C_CMD[1]) + 1, sizeof(char));
-    strcpy(C_ACC, C_CMD[1]);
+    C_ACC = strdup(C_CMD[1]);
     dprintf(C_SOCKET, ACC_OK);
 }
 

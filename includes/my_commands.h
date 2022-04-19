@@ -15,8 +15,12 @@ void my_cdup(int);
 void my_quit(int);
 void my_dele(int);
 void my_pwd(int);
+void my_pasv(int);
 void my_help(int);
 void my_noop(int);
+void my_retr(int);
+void my_stor(int);
+void my_list(int);
 
 static const char *COMMANDS[] = {
     "USER",
@@ -44,13 +48,13 @@ static void (*COMMANDS_FUNC[])(int) = {
     my_quit,
     my_dele,
     my_pwd,
-    NULL,
+    my_pasv,
     NULL,
     my_help,
     my_noop,
-    NULL,
-    NULL,
-    NULL
+    my_retr,
+    my_stor,
+    my_list
 };
 
 #endif

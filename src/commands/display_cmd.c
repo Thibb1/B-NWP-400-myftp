@@ -36,5 +36,6 @@ void my_help(int i)
 void my_pwd(int i)
 {
     CHECK_LOG;
+    CHECK_ARG(!C_CMD[1]);
     dprintf(C_SOCKET, "253 \"%s\"" CR, C_PATH);
 }

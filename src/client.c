@@ -12,8 +12,12 @@ void disconnect_client(int i)
     if (!C_SOCKET)
         return;
     dprintf(C_SOCKET, LOGOUT);
+    FCLOSE(C_SOCKET);
     LOG("Connection closed %s:%d", inet_ntoa(S_ADDR.sin_addr), ntohs(S_PORT));
-    close(C_SOCKET);
+    FCLOSE(C_DATA);
+    FCLOSE(C_DTSCT);
+    C_DTSCT = 0;
+    C_DATA = 0;
     C_SOCKET = 0;
     DESTROY(C_CMD);
     DESTROY(C_PATH);
@@ -29,7 +33,7 @@ void handle_client(int i)
     ssize_t read_ret;
     char buffer[1024];
 
-    if (FD_ISSET(C_SOCKET, &my_server()->read_fds)) {
+    if (FD_ISSET(C_SOCKET, &SERVER->read_fds)) {
         if ((read_ret = read(C_SOCKET, buffer, 1024)) == 0) {
             disconnect_client(i);
         } else {
@@ -43,8 +47,7 @@ void handle_client(int i)
 void connect_client(void)
 {
     ASSERT((my_server()->new_socket = accept(S_SOCKET,
-        (struct sockaddr *)&S_ADDR, (socklen_t *)
-        &my_server()->addr_len)) < 0, "accept error");
+        (struct sockaddr *)&S_ADDR, &S_ADLEN)) < 0, "accept error");
     LOG("Connection from %s:%d", inet_ntoa(S_ADDR.sin_addr), ntohs(S_PORT));
     ASSERT(dprintf(my_server()->new_socket, SERVICE_READY) < 0, "message");
     LOG("Welcomed new connection");
@@ -52,9 +55,8 @@ void connect_client(void)
         if (C_SOCKET == 0) {
             C_SOCKET = my_server()->new_socket;
             C_CNT = false;
-            C_PATH = calloc(strlen(my_server()->home_anon) + 1, sizeof(char));
-            strcpy(C_PATH, my_server()->home_anon);
-            break;
+            C_PATH = strdup(my_server()->home_anon);
+            return;
         }
     }
 }

@@ -40,6 +40,7 @@ void garbage_delete(void)
     for (int i = 0; i < MAX_CLIENTS; i++) {
         DESTROY(C_PATH);
         DESTROY(C_CMD);
+        DESTROY(C_ACC);
         DESTROY(my_client(i));
     }
     DESTROY(my_clients());
