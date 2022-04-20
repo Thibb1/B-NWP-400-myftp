@@ -158,8 +158,7 @@ void open_socket(int);
     #define S_PORT S_ADDR.sin_port
 
     #define DEF_OR_ARG(value, ...) value
-    #define ASSERT(v, ...) \
-if (v) { \
+    #define ASSERT(v, ...) if (v) { \
     fprintf(stderr, ERROR, __FILE__, __LINE__, __FUNCTION__); \
     fprintf(stderr, "(%s)\n", DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) "Error")); \
     garbage_delete(); \
